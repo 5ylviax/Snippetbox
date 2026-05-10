@@ -12,6 +12,10 @@ type application struct {
 	infoLog  *log.Logger
 }
 
+// Responsibility of main() is limited to:
+// i. Parsing the runtime configuration settings for the application
+// ii. Establishing the dependencies for the handlers
+// iii. Running the HTTP server
 func main() {
 
 	addr := flag.String("addr", ":4000", "HTTP network address")
@@ -25,19 +29,10 @@ func main() {
 		infoLog:  infoLog,
 	}
 
-	mux := http.NewServeMux()
-
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
-	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
-
-	mux.HandleFunc("/", app.home) // broweser sends a request to the server, it maches `/` to the home handler the home function runs and sends back the response
-	mux.HandleFunc("/snippet/view", app.snippetView)
-	mux.HandleFunc("/snippet/create", app.snippetCreate) // route only responds to HTTP request which use the POST method
-
 	srv := &http.Server{
 		Addr:     *addr,
 		ErrorLog: errorLog,
-		Handler:  mux,
+		Handler:  app.routes(),
 	}
 
 	infoLog.Printf("Starting serer %s", *addr)
