@@ -88,3 +88,49 @@ Quick rule: trailing slash = wildcard, no trailing slash = exact match.
 ## The DefaultServeMux
 
 `http.Handle()`/`http.HandleFunc()`- these allow you to register routes without declaring a servemux
+
+### What happens behind the scene? 
+these functions register their routes with something called the
+DefaultServeMux.
+
+`DefaultServeMux` is a global variable, any package can access it and register a route - including any third-party package that the application imports. 
+
+If compromised -> DefaultServeMux can be used to do malicious handler to the web
+
+```go
+var DefaultServeMux = NewServeMux
+```
+
+***NOT RECOMMENDED FOR PRODUCTION APPLICATIONS***
+
+## Additional Information 
+### Servemux features and quirks 
+- In Go servemux, longer URL patterns have priority over shorter ones.
+- Pattern registration order does not matter.
+- URL paths are automatically cleaned:
+  - Removes `.` and `..`
+  - Removes repeated slashes
+  - Redirects to clean URL with `301 Permanent Redirect`
+- Subtree paths with missing trailing `/` are automatically redirected.
+  - Example: `/foo` → `/foo/` if `/foo/` is registered.
+
+## What about RESTful routing?
+- go does not support routing based on request methods 
+- does not support clean urls with variables
+- does not support regexp-based patterns
+
+
+## Customizing HTTP headers
+
+
+| MEHTOD  |PATTERN | HANDLER| ACTION|
+| -------- | -------- | -------- |-------- |
+|ANY | / | home | Display the home page|
+| ANY | /snippet/view| snippetView | Display a specific snippet |
+|POST | /snippet/create| snippetCreate| Create a new snippet|
+
+
+
+
+
+## URL query strings 
