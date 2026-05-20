@@ -52,7 +52,7 @@ func main() {
 		Handler:  app.routes(),
 	}
 
-	infoLog.Printf("Starting serer %s", *addr)
+	infoLog.Printf("Starting server %s", *addr)
 	err = srv.ListenAndServe()
 	// Port 0 - 1023 are restricted and typically can only be used by services which have root privileges
 
